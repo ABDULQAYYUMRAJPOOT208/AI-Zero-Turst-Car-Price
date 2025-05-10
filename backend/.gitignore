@@ -1,2 +1,3 @@
 lenv/
 __pycache__/
+.env*
