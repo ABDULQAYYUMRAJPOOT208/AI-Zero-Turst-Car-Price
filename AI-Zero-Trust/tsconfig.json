@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2020",                        // ✅ Required for BigInt literals
+    "lib": ["dom", "dom.iterable", "ES2020"], // ✅ Updated to match target
     "allowJs": true,
-    "target": "ES6",
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,

@@ -1,5 +1,8 @@
 "use client";
 
+import fs from 'fs';
+import crypto from 'crypto';
+
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -47,13 +50,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-// import CryptoJS from "crypto-js";
-// import Utf8 from "crypto-js/enc-utf8";
-// import Base64 from "crypto-js/enc-base64";
-import { encryptData } from "@/utils/encrypt";
-import forge from "node-forge";
-
-const secretKey = "ThirtyTwoByteSuperSecretEncryptionKey"; // Same key used in both frontend and backend
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -73,6 +69,92 @@ export default function Dashboard() {
     "WR-V 1.2L I-VTEC VX MT",
     "PUNCH CREATIVE 1.2 RTN DUAL TONE",
     "NEXON XMA DIESEL",
+    "XUV700 AX 7 LUXURY D AWD AT 7 STR",
+    "Ecosport TITANIUM + 1.5L PETROL AT",
+    "Dzire LXI",
+    "GRAND I10 NIOS SPORTZ 1.2 KAPPA VTVT",
+    "Tiago XE PETROL",
+    "Creta E PLUS 1.6 PETROL",
+    "Alto K10 VXI",
+    "Verna 1.6 CRDI SX",
+    "Alto K10 VXI AMT",
+    "Amaze 1.2L I-VTEC S",
+    "SELTOS HTE 1.5 DIESEL",
+    "GRAND I10 NIOS ASTA 1.2 KAPPA VTVT",
+    "Ertiga ZXI 1.5L PETROL 7 STR",
+    "Venue S 1.2 PETROL",
+    "Altroz XT 1.2L PETROL",
+    "Swift VXI 1.2L K-SERIES DUAL JET",
+    "Aura S 1.2 PETROL",
+    "Baleno ZETA 1.2L K SERIES",
+    "Altroz XE 1.2L PETROL",
+    "i20 SPORTZ 1.2 KAPPA PETROL",
+    "Amaze VX CVT PETROL 1.2L I-VTEC",
+    "IGNIS ZETA 1.2L VVT",
+    "Baleno ZETA CVT 1.2L K SERIES",
+    "Tiago XZA+ 1.2 REVOTRON PETROL",
+    "NEXON XZ PLUS PETROL",
+    "i20 ASTA 1.2L KAPPA PETROL",
+    "Baleno DELTA 1.2L K SERIES",
+    "i20 SPORTZ 1.2L PETROL CVT",
+    "Altroz XZ PLUS 1.2L REVOTRON",
+    "Celerio VXI 1.0L PETROL",
+    "Celerio ZXI 1.0L PETROL",
+    "Eeco 5 STR AC",
+    "Eeco CARGO AC CNG",
+    "WagonR ZXI 1.2L",
+    "WagonR VXI 1.0L CNG",
+    "Celerio LXI 1.0L PETROL",
+    "WagonR LXI 1.0L CNG",
+    "WagonR VXI 1.0L",
+    "KWID RXL 1.0L PETROL",
+    "KWID CLIMBER 1.0L PETROL",
+    "KWID RXT 1.0L PETROL",
+    "TRIBER RXT 1.0L PETROL MANUAL",
+    "TRIBER RXZ 1.0L PETROL MANUAL",
+    "TRIBER RXZ 1.0L PETROL EASY-R",
+    "TRIBER RXT 1.0L PETROL EASY-R",
+    "MAGNITE XE PETROL",
+    "MAGNITE XL PETROL",
+    "MAGNITE XV PETROL",
+    "MAGNITE XV PREMIUM PETROL",
+    "MAGNITE XV RED EDITION PETROL",
+    "MAGNITE XV PREMIUM TURBO CVT",
+    "RENAULT KIGER RXL 1.0L PETROL MT",
+    "RENAULT KIGER RXZ 1.0L PETROL CVT",
+    "RENAULT KIGER RXT 1.0L PETROL EASY-R",
+    "RENAULT KIGER RXZ TURBO PETROL CVT",
+    "RENAULT KIGER RXT TURBO PETROL MT",
+    "RENAULT KIGER RXZ 1.0L PETROL EASY-R",
+    "RENAULT KIGER RXZ TURBO PETROL MT",
+    "RENAULT KIGER RXT 1.0L PETROL MT",
+    "CITROEN C3 FEEL 1.2L PETROL",
+    "CITROEN C3 SHINE 1.2L PETROL",
+    "CITROEN C3 SHINE 1.2L TURBO PETROL",
+    "FRONX SIGMA 1.2L PETROL",
+    "FRONX DELTA 1.2L PETROL",
+    "FRONX DELTA 1.2L PETROL AMT",
+    "FRONX DELTA+ 1.2L PETROL",
+    "FRONX ZETA 1.0L BOOSTERJET TURBO PETROL",
+    "FRONX ALPHA 1.0L BOOSTERJET TURBO PETROL",
+    "Fronx DELTA+ 1.0L BOOSTERJET TURBO PETROL",
+    "FRONX ZETA 1.2L PETROL AGS",
+    "FRONX ALPHA 1.2L PETROL AGS",
+    "NEXON XM PETROL",
+    "NEXON XZ PLUS LUXS PETROL",
+    "NEXON XZ PLUS LUXS PETROL DCA",
+    "NEXON XZ PLUS PETROL DARK",
+    "NEXON XZ PLUS PETROL DCA",
+    "NEXON FEARLESS PLUS PETROL",
+    "NEXON FEARLESS PLUS PETROL DCA",
+    "NEXON FEARLESS PLUS PETROL DCA DT",
+    "NEXON SMART PLUS PETROL",
+    "NEXON CREATIVE PETROL",
+    "NEXON FEARLESS PETROL",
+    "NEXON CREATIVE PLUS PETROL DCA",
+    "NEXON CREATIVE PLUS PETROL",
+    "NEXON CREATIVE PETROL DCA",
+    "NEXON SMART PLUS PETROL DT",
     "NEXON CREATIVE PLUS PETROL DT",
     "NEXON SMART PLUS S PETROL",
     "NEXON SMART PETROL",
@@ -81,17 +163,17 @@ export default function Dashboard() {
   const [formData, setFormData] = useState({
     make: "",
     model: "",
-    make_year: "2022",
-    reg_year_only: "2021",
-    km_driven: "600",
+    make_year: "",
+    reg_year_only: "",
+    km_driven: "",
     condition: "",
     fuel_type: "",
     transmission: "",
     ownership: "",
-    "engine_capacity(CC)": "700",
-    overall_cost: "6000", // Added
-    spare_key: "1", // Added
-    has_insurance: "0", // Added
+    "engine_capacity(CC)": "",
+    overall_cost: "", // Added
+    spare_key: "", // Added
+    has_insurance: "", // Added
   });
 
   useEffect(() => {
@@ -115,7 +197,6 @@ export default function Dashboard() {
 
     try {
       // 1. Prepare Data for Sending
-
       const requestData = {
         make_year: parseInt(formData.make_year),
         km_driven: parseInt(formData.km_driven),
@@ -130,28 +211,45 @@ export default function Dashboard() {
         model: formData.model,
         reg_year_only: parseInt(formData.reg_year_only),
       };
-      console.log("Request data before encryption: ", requestData);
-      console.log("Before key reading");
-      const publicKey = await fetch("/public_key.pem").then((res) =>
-        res.text()
-      );
 
-      // 3. Encrypt data
-      const encryptedPayload = await encryptData(requestData, publicKey);
-      console.log("Encrypted key to be send is", encryptedPayload.encryptedKey);
-      // 4. Send to Flask backend
-      const predictionResponse = await axios.post(
-        "http://192.168.1.5:5000/api/predict",
+      const publicKey = fs.readFileSync('public_key.pem', 'utf8');
+      const jsonData = JSON.stringify(requestData);
+      const encryptedBuffer = crypto.publicEncrypt(
         {
-          encryptedKey: encryptedPayload.encryptedKey,
-          encryptedData: encryptedPayload.encryptedData,
-          iv: encryptedPayload.iv,
+          key: publicKey,
+          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
         },
+        Buffer.from(jsonData)
+      );
+      // Step 6: Convert to base64 and store/display
+      const encryptedBase64 = encryptedBuffer.toString('base64');
+      console.log("Encrypted data:", encryptedBase64);
+      fs.writeFileSync('encrypted_data.txt', encryptedBase64);
+
+      console.log("Requested Data: ", requestData);
+      // 2. Send Data to Flask API (for Encoding)
+      // const encodingResponse = await fetch("http://0.0.0.0:5000/encode", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(requestData),
+      // });
+
+      // if (!encodingResponse.ok) {
+      //   throw new Error(`Encoding failed: ${encodingResponse.status}`);
+      // }
+      // const encodedData = await encodingResponse.json();
+
+      // 3. Send Encoded Data to Flask API (for Prediction)
+      const predictionResponse = await axios.post(
+        "http://127.0.0.1:5000/api/predict",
+        formData,
         {
           headers: {
             Authorization: `Bearer ${session?.user?.token}`,
-            "Content-Type": "application/json",
-            // Origin: "http://localhost:3000",
+            "Content-Type": "application/json", // Tell Axios to send as multipart
           },
         }
       );
@@ -172,7 +270,7 @@ export default function Dashboard() {
       // ) {
       const predictedPrice = responseData.prediction[0];
       setPredictionResult({
-        predictedPrice: predictedPrice / 150,
+        predictedPrice: predictedPrice/150,
       });
       // } else {
       //   throw new Error("Invalid prediction format from server.");
@@ -383,6 +481,18 @@ export default function Dashboard() {
                             <SelectItem value="Tata">Tata</SelectItem>
                             <SelectItem value="Honda">Honda</SelectItem>
                             <SelectItem value="Ford">Ford</SelectItem>
+                            <SelectItem value="Maruti">Maruti</SelectItem>
+                            <SelectItem value="KIA">KIA</SelectItem>
+                            <SelectItem value="MG">MG</SelectItem>
+                            <SelectItem value="Renault">Renault</SelectItem>
+                            <SelectItem value="Volkswagen">
+                              Volkswagen
+                            </SelectItem>
+                            <SelectItem value="Nissan">Nissan</SelectItem>
+                            <SelectItem value="Skoda">Skoda</SelectItem>
+                            <SelectItem value="Toyota">Toyota</SelectItem>
+                            <SelectItem value="Datsun">Datsun</SelectItem>
+                            <SelectItem value="Jeep">Jeep</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

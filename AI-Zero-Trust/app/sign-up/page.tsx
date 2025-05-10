@@ -42,16 +42,16 @@ export default function SignUp() {
 
 
 
-      const {email: userEmail, mfaSecret} = res.data;
+      const {email, mfaSecret} = res.data;
       console.log("Registration response:", res.data)
 
-      router.push(`/barcode?email=${encodeURIComponent(userEmail)}&mfaSecret=${encodeURIComponent(mfaSecret)}`);
+      router.push(`/barcode?email=${encodeURIComponent(email)}&mfaSecret=${encodeURIComponent(mfaSecret)}`);
 
       // In a real app, you would call your registration API here
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Redirect to barcode page after successful registration
-      router.push("/barcode")
+      // router.push("/barcode")
     } catch (error) {
       console.error("Registration failed:", error)
     } finally {

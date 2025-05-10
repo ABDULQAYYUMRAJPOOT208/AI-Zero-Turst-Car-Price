@@ -5,3 +5,5 @@ joblib
 flask_cors
 PyJWT
 python-dotenv
+cryptography
+pycryptodome
