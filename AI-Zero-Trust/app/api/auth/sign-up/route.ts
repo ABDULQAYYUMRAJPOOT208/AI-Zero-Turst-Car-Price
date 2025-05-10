@@ -6,9 +6,7 @@ import speakeasy from "speakeasy";
 
 
 export async function POST(req: NextRequest) {
-  console.log("Sign Up hitted...");
   const { email, password, name } = await req.json(); // Use req.json() to parse the request body
-  console.log("Recieved data in sign-up: ", name, email, password);
 
   if (req.method !== 'POST') {
     return new NextResponse(JSON.stringify({ error: 'Method Not Allowed' }), {

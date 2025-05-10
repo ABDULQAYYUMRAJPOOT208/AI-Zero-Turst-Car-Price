@@ -22,9 +22,7 @@ global.mongoose ||= { conn: null, promise: null };
 const cached = global.mongoose!;
 
 async function dbConnect(): Promise<typeof mongooseLib> {
-  console.log('Connecting to MongoDB...', MONGODB_URI);
   if (cached.conn) {
-    console.log("Connected slready...");
     return cached.conn;}
 
   if (!cached.promise) {
@@ -32,7 +30,6 @@ async function dbConnect(): Promise<typeof mongooseLib> {
   }
 
   cached.conn = await cached.promise;
-  console.log('Connected to MongoDB', MONGODB_URI);
   return cached.conn;
 }
 

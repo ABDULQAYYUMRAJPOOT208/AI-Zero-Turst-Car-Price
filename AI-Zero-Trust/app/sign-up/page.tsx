@@ -33,7 +33,6 @@ export default function SignUp() {
 
     // Simulate registration
     try {
-      console.log("Registering user frontend:", formData);
       const res = await axios.post("/api/auth/sign-up", {
         name: formData.name,
         email: formData.email,
@@ -43,7 +42,6 @@ export default function SignUp() {
 
 
       const {email, mfaSecret} = res.data;
-      console.log("Registration response:", res.data)
 
       router.push(`/barcode?email=${encodeURIComponent(email)}&mfaSecret=${encodeURIComponent(mfaSecret)}`);
 

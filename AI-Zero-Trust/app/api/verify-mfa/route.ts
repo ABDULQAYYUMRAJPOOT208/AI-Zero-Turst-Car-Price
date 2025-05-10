@@ -5,11 +5,7 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 
 export async function POST(req: NextRequest) {
-  console.log("POST request to /api/verify-mfa");
-  console.log("Request body: ", req.body);
   const { email, token } = await req.json();
-  console.log("Email: ", email);
-  console.log("Token: ", token);
   await connectDB();
   console.log("finding user with email: ", email);
   const user = await User.findOne({ email });

@@ -24,15 +24,12 @@ export default function QRCodeScreen() {
   
   useEffect(() => {
     setEmail(searchParams.get("email"));
-    console.log("Data received:", email, mfaSecret);
     if (email && mfaSecret) {
       const generateQRCode = async () => {
         try {
-          console.log("Generating QR Code for:", email, mfaSecret);
           const otpAuthUrl = `otpauth://totp/AIZeroTrustProject:${email}?secret=${mfaSecret}&issuer=AIZeroTrustProject`
           const qrDataUrl = await QRCode.toDataURL(otpAuthUrl);
           setQrCodeDataUrl(qrDataUrl);
-          console.log("QrCode generated and set");
           setIsLoading(false);
         } catch (error) {
           console.error("Failed to generate QR Code:", error)

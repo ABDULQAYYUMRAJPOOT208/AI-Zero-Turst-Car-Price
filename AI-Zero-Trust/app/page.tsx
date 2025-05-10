@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowRight, BarChart2, Car, DollarSign, LineChart } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export default function Home() {
   return (
@@ -50,7 +51,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link href="/sign-up">
+                  <Link href="/dashboard">
                     <Button size="lg" className="gap-1">
                       Get Started <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -65,7 +66,8 @@ export default function Home() {
               <div className="flex items-center justify-center">
                 <div className="relative h-[350px] w-full overflow-hidden rounded-xl bg-gradient-to-br from-teal-100 to-teal-50 p-4 dark:from-teal-950 dark:to-teal-900">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <LineChart className="h-64 w-64 text-teal-600 dark:text-teal-400" strokeWidth={1.5} />
+                    {/* <LineChart className="h-64 w-64 text-teal-600 dark:text-teal-400" strokeWidth={4} /> */}
+                    <Image src={'/car.jpg'} height={350} width={700} alt="Car Images"/>
                   </div>
                 </div>
               </div>
@@ -206,7 +208,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex justify-center">
-              <Link href="/sign-up">
+              <Link href="/dashboard">
                 <Button size="lg" className="gap-1">
                   Get Started Today <ArrowRight className="h-4 w-4" />
                 </Button>

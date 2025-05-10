@@ -20,6 +20,11 @@ import json
 import pickle
 from sklearn.preprocessing import LabelEncoder
 from io import StringIO
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
@@ -31,10 +36,20 @@ JWT_SECRET = os.getenv("JWT_SECRET", "your-default-secret-key")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 # Load private key for decryption
-with open("private_key.pem", "rb") as key_file:
-    private_key = serialization.load_pem_private_key(key_file.read(), password=None)
+private_key=''
+def load_private_key():
+    private_key_str = os.getenv("PRIVATE_KEY")
+    if not private_key_str:
+        raise ValueError("PRIVATE_KEY not found in .env")
 
+    private_key_bytes = private_key_str.replace("\\n", "\n").encode()
 
+    return serialization.load_pem_private_key(
+        private_key_bytes,
+        password=None,
+    )
+
+private_key = load_private_key()
 # Token Required Decorator
 def token_required(f):
     @wraps(f)
@@ -97,7 +112,6 @@ for feature in categorical_features:
     label_encoders[feature].fit(training_data[feature])
 
 
-print("Label encoders initialized for categorical features.", label_encoders)
 
 
 # Sanitize input data function
@@ -116,7 +130,6 @@ def sanitize_input(input_data, training_data):
 
 # Handle unseen labels in the prediction phase by predicting a value
 def encode_categorical_features(input_df):
-    # print("Encoding categorical features...", input_df)
     for col in categorical_features:
         if col in input_df.columns:
             try:
@@ -175,10 +188,10 @@ def login():
 
 # Prediction route
 @app.route("/api/predict", methods=["POST"])
+@token_required
 def predict():
     try:
         data = request.get_json()
-        # print("Encrypted     input data:", data)
 
         if not data:
             return jsonify({"error": "No data provided"}), 400
@@ -220,7 +233,6 @@ def predict():
         if "engine_capacity_CC" in input_data:
 
             input_data["engine_capacity(CC)"] = input_data.pop("engine_capacity_CC")
-        # print("Decrypted input data:", input_data)
         # ✅ Convert dict to DataFrame early
         feature_order = [
             "make_year", "km_driven", "fuel_type", "transmission", "ownership",
@@ -234,14 +246,9 @@ def predict():
 
         # ✅ Encode categorical features
         input_df = encode_categorical_features(input_df)
-        print("Before scalling:", input_df)
 
-        # ✅ Scale numeric features
-        # scaled = scaler.transform(input_df[numerical_features])
-        # input_df[numerical_features] = scaled
 
         # ✅ Predict
-        print("Final input for prediction:", input_df)
         prediction = model.predict(input_df)
         return jsonify({"prediction": prediction.tolist()}), 200
 

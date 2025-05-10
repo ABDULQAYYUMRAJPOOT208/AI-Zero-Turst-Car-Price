@@ -31,25 +31,19 @@ export const handler = NextAuth({
         token: { label: "MFA Token", type: "text", optional: true },
       },
       async authorize(credentials: any) {
-        console.log("Credentials: ", credentials);
         await connectDB();
-        console.log("Connected to MongoDB");
         const user = await User.findOne({ email: credentials.email });
-        console.log("User found: ", user);
         if (!user) {
-          console.log("User not found");
           return null;
         }
 
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) {
-          console.log("Invalid password");
           return null;
         }
 
         if (user.mfaEnabled && !credentials.token) {
-          console.log("MFA token required");
           return null;
         }
 
@@ -61,7 +55,6 @@ export const handler = NextAuth({
             window: 1,
           });
           if (!tokenValidates) {
-            console.log("Invalid MFA token");
             return null;
           }
         }
@@ -81,7 +74,6 @@ export const handler = NextAuth({
   },
   events: {
     async signIn({ user }) {
-      console.log("User signed in: Logging event in database");
       await logsCollection.insertOne({
         event: "signIn",
         email: user.email,
@@ -89,7 +81,6 @@ export const handler = NextAuth({
       });
     },
     async signOut({ token }) {
-      console.log("User signed out: Logging event in database");
       await logsCollection.insertOne({
         event: "signOut",
         email: token.email,
@@ -116,13 +107,11 @@ export const handler = NextAuth({
   
         // ✅ Get JWT token from Flask backend
         try {
-          console.log("Fetching JWT token from backend...");
           const response = await fetch("http://127.0.0.1:5000/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: user.email }),
           });
-          console.log("Response from backend for JWT TOken:", response);
           const data = await response.json();
   
           if (response.ok && data.token) {

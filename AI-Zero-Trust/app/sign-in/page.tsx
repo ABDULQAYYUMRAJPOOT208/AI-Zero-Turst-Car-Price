@@ -48,9 +48,7 @@ export default function SignIn() {
         redirect: false,
       });
 
-      console.log("Came back from signIn: ", res);
       if (!res?.ok) {
-        console.log("SignIn failed: ", res);
         if (res?.url) {
           // Redirect to MFA page if MFA is required
           
@@ -59,7 +57,6 @@ export default function SignIn() {
           alert("Invalid credentials or user not found");
         }
       } else {
-        console.log("Came back to SignIn successful: ", res);
         router.push("/dashboard"); // Redirect to dashboard if sign-in successful
       }
       if (res?.error) {

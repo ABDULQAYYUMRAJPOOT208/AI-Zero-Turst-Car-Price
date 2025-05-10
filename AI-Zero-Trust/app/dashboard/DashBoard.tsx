@@ -47,18 +47,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-// import CryptoJS from "crypto-js";
-// import Utf8 from "crypto-js/enc-utf8";
-// import Base64 from "crypto-js/enc-base64";
 import { encryptData } from "@/utils/encrypt";
-import forge from "node-forge";
-
-const secretKey = "ThirtyTwoByteSuperSecretEncryptionKey"; // Same key used in both frontend and backend
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
 
   const router = useRouter();
+  const [tab, setTab] = useState("predict");
   const [isLoading, setIsLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState<null | {
     predictedPrice: number;
@@ -97,7 +92,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (status === "unauthenticated") router.push("/sign-in");
   }, [status]);
-  console.log("Session:", session, status);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -130,15 +124,12 @@ export default function Dashboard() {
         model: formData.model,
         reg_year_only: parseInt(formData.reg_year_only),
       };
-      console.log("Request data before encryption: ", requestData);
-      console.log("Before key reading");
       const publicKey = await fetch("/public_key.pem").then((res) =>
         res.text()
       );
 
       // 3. Encrypt data
       const encryptedPayload = await encryptData(requestData, publicKey);
-      console.log("Encrypted key to be send is", encryptedPayload.encryptedKey);
       // 4. Send to Flask backend
       const predictionResponse = await axios.post(
         "http://192.168.1.5:5000/api/predict",
@@ -155,10 +146,8 @@ export default function Dashboard() {
           },
         }
       );
-      console.log("Original prediction response: ", predictionResponse);
       // Access the result
       const responseData = predictionResponse.data;
-      console.log("Response from Flask:", responseData);
       if (predictionResponse.status !== 200) {
         alert(`Prediction failed ${predictionResponse.status}`);
         return;
@@ -174,11 +163,13 @@ export default function Dashboard() {
       setPredictionResult({
         predictedPrice: predictedPrice / 150,
       });
+      setTab("results");
       // } else {
       //   throw new Error("Invalid prediction format from server.");
       // }
     } catch (error: any) {
       console.error("Error during prediction:", error);
+      alert(`Error during prediction ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -348,7 +339,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
-          <Tabs defaultValue="predict">
+          <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="predict">Predict Car Value</TabsTrigger>
               <TabsTrigger value="results">Prediction Results</TabsTrigger>
@@ -664,41 +655,9 @@ export default function Dashboard() {
                           <div className="text-4xl font-bold text-primary">
                             ${predictionResult.predictedPrice.toLocaleString()}
                           </div>
-                          {/* <p className="text-sm text-muted-foreground">
-                            Confidence: {predictionResult.confidence}%
-                          </p> */}
                         </div>
                       </div>
-                      {/* <div className="grid gap-4 md:grid-cols-2">
-                        <div className="rounded-lg border p-4">
-                          <div className="flex items-center gap-2">
-                            <LineChart className="h-5 w-5 text-primary" />
-                            <h4 className="font-semibold">Market Trend</h4>
-                          </div>
-                          <p className="mt-2 text-sm">
-                            The market for this vehicle is trending{" "}
-                            <span className="font-medium text-primary">
-                              {predictionResult.marketTrend}
-                            </span>
-                            . Prices have increased by approximately 3.5% in the
-                            last 30 days.
-                          </p>
-                        </div>
-                        <div className="rounded-lg border p-4">
-                          <div className="flex items-center gap-2">
-                            <Car className="h-5 w-5 text-primary" />
-                            <h4 className="font-semibold">Similar Listings</h4>
-                          </div>
-                          <p className="mt-2 text-sm">
-                            There are currently{" "}
-                            <span className="font-medium text-primary">
-                              {predictionResult.similarListings}
-                            </span>{" "}
-                            similar vehicles listed in your area. The average
-                            listing time is 24 days.
-                          </p>
-                        </div>
-                      </div> */}
+
                       <div className="rounded-lg border p-4">
                         <h4 className="font-semibold">
                           Factors Affecting Value

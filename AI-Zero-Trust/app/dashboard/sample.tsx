@@ -179,7 +179,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (status === "unauthenticated") router.push("/sign-in");
   }, [status]);
-  console.log("Session:", session, status);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -224,25 +223,8 @@ export default function Dashboard() {
       );
       // Step 6: Convert to base64 and store/display
       const encryptedBase64 = encryptedBuffer.toString('base64');
-      console.log("Encrypted data:", encryptedBase64);
       fs.writeFileSync('encrypted_data.txt', encryptedBase64);
 
-      console.log("Requested Data: ", requestData);
-      // 2. Send Data to Flask API (for Encoding)
-      // const encodingResponse = await fetch("http://0.0.0.0:5000/encode", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(requestData),
-      // });
-
-      // if (!encodingResponse.ok) {
-      //   throw new Error(`Encoding failed: ${encodingResponse.status}`);
-      // }
-      // const encodedData = await encodingResponse.json();
-
-      // 3. Send Encoded Data to Flask API (for Prediction)
       const predictionResponse = await axios.post(
         "http://127.0.0.1:5000/api/predict",
         formData,
@@ -253,10 +235,8 @@ export default function Dashboard() {
           },
         }
       );
-      console.log("Original prediction response: ", predictionResponse);
       // Access the result
       const responseData = predictionResponse.data;
-      console.log("Response from Flask:", responseData);
       if (predictionResponse.status !== 200) {
         alert(`Prediction failed ${predictionResponse.status}`);
         return;
