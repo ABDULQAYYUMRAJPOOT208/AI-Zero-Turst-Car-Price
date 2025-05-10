@@ -165,7 +165,7 @@ def encode_categorical_features(input_df):
 # Home route
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return jsonify({"message": "Welcome to the Car Price Prediction API!"})
 
 
 # Login route
