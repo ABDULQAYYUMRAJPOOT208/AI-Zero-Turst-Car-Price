@@ -21,7 +21,7 @@ export default function SignUp() {
     email: "",
     password: "",
   })
-
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -33,7 +33,7 @@ export default function SignUp() {
 
     // Simulate registration
     try {
-      const res = await axios.post("/api/auth/sign-up", {
+      const res = await axios.post(`${baseUrl}/api/auth/sign-up`, {
         name: formData.name,
         email: formData.email,
         password: formData.password,
