@@ -37,6 +37,7 @@ export default function QRCodeScreen() {
   )
 }
 
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
 // Nested component that uses useSearchParams and contains all the logic
 function BarcodeContent() {
   const router = useRouter()
@@ -85,7 +86,7 @@ function BarcodeContent() {
   const handleVerifyToken = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/verify-mfa", {
+      const res = await axios.post(`${baseUrl}/api/verify-mfa`, {
         email,
         token,
       });
