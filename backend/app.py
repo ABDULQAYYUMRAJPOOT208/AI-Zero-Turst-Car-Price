@@ -27,7 +27,10 @@ load_dotenv()
 
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins":  [
+    "http://localhost:3000",
+    "https://ai-zero-turst-car-price.vercel.app"
+]}})
 
 # Load environment variables
 load_dotenv()

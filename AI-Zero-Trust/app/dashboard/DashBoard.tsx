@@ -132,7 +132,9 @@ export default function Dashboard() {
       const encryptedPayload = await encryptData(requestData, publicKey);
       // 4. Send to Flask backend
       const predictionResponse = await axios.post(
-        "http://192.168.1.5:5000/api/predict",
+        // "http://192.168.1.5:5000/api/predict"
+        "https://ai-zero-turst-car-price-production.up.railway.app/api/predict" 
+        ,
         {
           encryptedKey: encryptedPayload.encryptedKey,
           encryptedData: encryptedPayload.encryptedData,
