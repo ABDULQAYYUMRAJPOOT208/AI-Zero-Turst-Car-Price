@@ -21,7 +21,7 @@ export default function SignUp() {
     email: "",
     password: "",
   })
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  const baseUrl = process.env.NEXTAUTH_URL ;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -42,7 +42,7 @@ export default function SignUp() {
 
 
       const {email, mfaSecret} = res.data;
-
+      console.log("Registration successful:", res.data)
       router.push(`/barcode?email=${encodeURIComponent(email)}&mfaSecret=${encodeURIComponent(mfaSecret)}`);
 
       // In a real app, you would call your registration API here

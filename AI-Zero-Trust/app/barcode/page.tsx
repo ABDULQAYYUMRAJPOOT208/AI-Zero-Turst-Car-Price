@@ -37,7 +37,7 @@ export default function QRCodeScreen() {
   )
 }
 
-const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+const baseUrl = process.env.NEXTAUTH_URL;
 // Nested component that uses useSearchParams and contains all the logic
 function BarcodeContent() {
   const router = useRouter()
