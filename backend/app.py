@@ -32,13 +32,11 @@ CORS(app, resources={r"/api/*": {"origins":  [
     "https://ai-zero-turst-car-price.vercel.app"
 ]}})
 
-# Load environment variables
 load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET", "your-default-secret-key")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
-# Load private key for decryption
 private_key=''
 def load_private_key():
     private_key_str = os.getenv("PRIVATE_KEY")
@@ -53,7 +51,9 @@ def load_private_key():
     )
 
 private_key = load_private_key()
-# Token Required Decorator
+
+
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -73,7 +73,6 @@ def token_required(f):
     return decorated
 
 
-# Load model, scaler, and training data
 try:
     model_path = "final_adversarial_and_watermarked_model.pkl"
     scaler_path = "initial_scaler.pkl"
@@ -108,7 +107,6 @@ numerical_features = [
     "reg_year_only",
 ]
 
-# Initialize LabelEncoders for categorical features
 label_encoders = {}
 for feature in categorical_features:
     label_encoders[feature] = LabelEncoder()
@@ -131,36 +129,27 @@ def sanitize_input(input_data, training_data):
     return sanitized_data
 
 
-# Handle unseen labels in the prediction phase by predicting a value
 def encode_categorical_features(input_df):
     for col in categorical_features:
         if col in input_df.columns:
             try:
-                # Ensure conversion to plain string
                 input_df[col] = input_df[col].astype(str)
-                # Try encoding the existing value
                 input_df[col] = label_encoders[col].transform(input_df[col])
             except ValueError:
 
-                # If unseen label is detected, we need to handle it by assigning it a random number between a range 1 and 100
                 input_df[col] = random.randint(0, 100)
 
-                # input_df[col] = input_df[col].astype(str)
-                # Handle unseen labels gracefully by predicting a value
                 print(
                     f"Unseen label detected in column '{col}'. Predicting a default value."
                 )
 
-                # Prepare the input features for the model (only numerical features, as categorical will be encoded)
                 missing_value_features = input_df.drop(columns=categorical_features)
 
-                # Use the model to predict a value based on the missing categorical features
                 prediction_input = missing_value_features.copy()
                 prediction = model.predict(prediction_input)
 
-                # Assign the predicted value to the unseen categorical feature
                 input_df[col] = (
-                    prediction  # Replace the missing label with the predicted value
+                    prediction  
                 )
     return input_df
 
@@ -194,6 +183,7 @@ def login():
 @token_required
 def predict():
     try:
+
         data = request.get_json()
 
         if not data:
@@ -205,7 +195,6 @@ def predict():
         ):
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Step 1: Decrypt AES Key
         encrypted_key = base64.b64decode(data["encryptedKey"])
         iv = base64.b64decode(data["iv"])
         encrypted_data = base64.b64decode(data["encryptedData"])
@@ -219,24 +208,21 @@ def predict():
             ),
         )
 
-        # Step 2: Decrypt AES-encrypted data
         decryptor = Cipher(algorithms.AES(aes_key), modes.CBC(iv)).decryptor()
         decrypted_padded = decryptor.update(encrypted_data) + decryptor.finalize()
 
-        # Step 3: Remove PKCS7 padding
         unpadder = sym_padding.PKCS7(128).unpadder()
         decrypted = unpadder.update(decrypted_padded) + unpadder.finalize()
 
-        # Step 4: Decode JSON and clean
         decrypted_json = decrypted.decode("utf-8")
         decrypted_json = "".join(
             [char for char in decrypted_json if ord(char) >= 32 or char in ["\n", "\t"]]
         )
+        print(f"Decrypted JSON: {decrypted_json}")
         input_data = json.loads(decrypted_json)
         if "engine_capacity_CC" in input_data:
 
             input_data["engine_capacity(CC)"] = input_data.pop("engine_capacity_CC")
-        # ✅ Convert dict to DataFrame early
         feature_order = [
             "make_year", "km_driven", "fuel_type", "transmission", "ownership",
             "engine_capacity(CC)", "overall_cost", "has_insurance", "spare_key",
@@ -244,14 +230,11 @@ def predict():
         ]
         input_df = pd.DataFrame([input_data], columns=feature_order)
 
-        # ✅ Sanitize numeric values
         input_df = sanitize_input(input_df, training_data)
 
-        # ✅ Encode categorical features
         input_df = encode_categorical_features(input_df)
 
 
-        # ✅ Predict
         prediction = model.predict(input_df)
         return jsonify({"prediction": prediction.tolist()}), 200
 

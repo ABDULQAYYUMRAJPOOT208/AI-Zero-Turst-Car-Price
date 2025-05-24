@@ -33,7 +33,7 @@ export default function SignUp() {
 
     // Simulate registration
     try {
-      const res = await axios.post(`${baseUrl}/api/auth/sign-up`, {
+      const res = await axios.post(`/api/auth/sign-up`, {
         name: formData.name,
         email: formData.email,
         password: formData.password,

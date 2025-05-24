@@ -86,7 +86,7 @@ function BarcodeContent() {
   const handleVerifyToken = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${baseUrl}/api/verify-mfa`, {
+      const res = await axios.post(`/api/verify-mfa`, {
         email,
         token,
       });

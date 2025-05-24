@@ -84,15 +84,24 @@ export default function Dashboard() {
     transmission: "",
     ownership: "",
     "engine_capacity(CC)": "700",
-    overall_cost: "6000", // Added
-    spare_key: "1", // Added
-    has_insurance: "0", // Added
+    overall_cost: "6000", 
+    spare_key: "1", 
+    has_insurance: "0", 
   });
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/sign-in");
+    
+    console.log("Seesion: ", session)
   }, [status]);
 
+
+  // useEffect(()=>{
+  //   if(session?.user?.role !== "user"){
+  //     alert("You are not authorized to access this page.");
+  //     return;
+  //   }
+  // },[session])
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -132,8 +141,8 @@ export default function Dashboard() {
       const encryptedPayload = await encryptData(requestData, publicKey);
       // 4. Send to Flask backend
       const predictionResponse = await axios.post(
-        // "http://192.168.1.5:5000/api/predict"
-        "https://ai-zero-turst-car-price-production.up.railway.app/api/predict" 
+        "http://127.0.0.1:5000/api/predict"
+        // "https://ai-zero-turst-car-price-production.up.railway.app/api/predict" 
         ,
         {
           encryptedKey: encryptedPayload.encryptedKey,
