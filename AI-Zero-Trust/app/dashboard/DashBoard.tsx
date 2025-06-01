@@ -141,8 +141,8 @@ export default function Dashboard() {
       const encryptedPayload = await encryptData(requestData, publicKey);
       // 4. Send to Flask backend
       const predictionResponse = await axios.post(
-        "http://127.0.0.1:5000/api/predict"
-        // "https://ai-zero-turst-car-price-production.up.railway.app/api/predict" 
+        // "http://127.0.0.1:5000/api/predict"
+        "https://ai-zero-turst-car-price-production.up.railway.app/api/predict" 
         ,
         {
           encryptedKey: encryptedPayload.encryptedKey,
@@ -157,6 +157,7 @@ export default function Dashboard() {
           },
         }
       );
+
       // Access the result
       const responseData = predictionResponse.data;
       if (predictionResponse.status !== 200) {
@@ -180,7 +181,10 @@ export default function Dashboard() {
       // }
     } catch (error: any) {
       console.error("Error during prediction:", error);
-      alert(`Error during prediction ${error}`);
+      alert(`Due to expiration of backend free trial, the prediction service is not available at the moment. Please try again later. Setting default values for the prediction results.`);
+      setPredictionResult({
+        predictedPrice: 15000, // Default value for testing
+      });
     } finally {
       setIsLoading(false);
     }
